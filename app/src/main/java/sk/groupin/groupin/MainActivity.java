@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.wifi.hotspot2.pps.Credential;
 import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -28,6 +29,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.http.Body;
+
 public class MainActivity extends AppCompatActivity {
 
     ProgressBar superProgressBar;
@@ -36,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     SwipeRefreshLayout superSwipeLayout;
     private BroadcastReceiver broadcastReceiver;
     private TextView textView;
+    private ApiInterface apiInterface;
+    private GCMDevices devices;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +139,29 @@ public class MainActivity extends AppCompatActivity {
 
                 mNotificationManager.createNotificationChannel(mChannel);
         }
+
+        apiInterface = ApiClient.getRetrofitInstance().create(ApiInterface.class);
+        Call<GCMDevices> call = apiInterface.getGCMDevices("Basic bWZpMzpjb2tvbGFka2E=");
+        call.enqueue(new Callback<GCMDevices>() {
+            @Override
+            public void onResponse(Call<GCMDevices> call, Response<GCMDevices> response) {
+                devices = response.body();
+
+                Log.i("RESPONSE", response.message());
+                Log.i("RESPONSE BODY", String.valueOf(response.body().getUser()));
+                Log.i("RESPONSE HEADER", String.valueOf(response.headers()));
+                Log.i("RESPONSE RAW:", String.valueOf(response.raw()));
+                Log.i("RESPONSE CODE:", String.valueOf(response.code()));
+                Log.i("RESPO", String.valueOf(response.message()));
+
+
+            }
+
+            @Override
+            public void onFailure(Call<GCMDevices> call, Throwable t) {
+
+            }
+        });
 
     }
 
