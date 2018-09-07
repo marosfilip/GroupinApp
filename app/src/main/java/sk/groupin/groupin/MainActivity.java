@@ -13,10 +13,13 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -70,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 myLinLayout.setVisibility(View.GONE);
                 superSwipeLayout.setRefreshing(false);
+//                String cookies = CookieManager.getInstance().getCookie(url);
+//                Log.i("COOKIES:::::", cookies);
                 super.onPageFinished(view, url);
             }
         });
