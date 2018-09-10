@@ -8,6 +8,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
+import retrofit2.http.POST;
 
 
 public interface ApiInterface {
@@ -17,7 +18,5 @@ public interface ApiInterface {
     @GET("/accounts/api/4/")
     @Headers({contentType})
     Call<GCMDevices> getGCMDevices(@Header("Authorization") String myAuthString);
-
-
 
 }

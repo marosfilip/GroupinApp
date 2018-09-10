@@ -24,6 +24,8 @@ import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebViewDatabase;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -47,6 +49,13 @@ public class MainActivity extends AppCompatActivity {
     private TextView textView;
     private ApiInterface apiInterface;
     private GCMDevices devices;
+    private Button toSyncButton;
+
+    public void toSync(View view) {
+        Intent intent = new Intent(this, PhoneSync.class );
+        startActivity(intent);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
         myLinLayout = findViewById(R.id.myLinLayout);
         superProgressBar = findViewById(R.id.myProgressBar);
         superWebView = findViewById(R.id.myWebView);
+        toSyncButton = findViewById(R.id.toSyncButton);
+
 
         superProgressBar.setMax(100);
         textView.setText(SharedPrefManager.getInstance(this).getToken());
@@ -71,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(broadcastReceiver, new IntentFilter(MyFirebaseInstanceIdService.TOKEN_BROADCAST));
 
         superWebView.loadUrl("https://groupin.sk");
+
         superWebView.getSettings().setJavaScriptEnabled(true);
         superWebView.setWebViewClient(new WebViewClient(){
 
@@ -84,8 +96,10 @@ public class MainActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 myLinLayout.setVisibility(View.GONE);
                 superSwipeLayout.setRefreshing(false);
-//                String cookies = CookieManager.getInstance().getCookie(url);
-//                Log.i("COOKIES:::::", cookies);
+                String cookies = CookieManager.getInstance().getCookie(url);
+
+                Log.i("COOKIES:::::", cookies);
+
                 super.onPageFinished(view, url);
             }
         });

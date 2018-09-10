@@ -13,6 +13,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <Button
+            android:id="@+id/toSyncButton"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="toSync"
+            android:text="SYNC"
+            android:visibility="visible"
+            tools:layout_editor_absoluteX="276dp"
+            tools:layout_editor_absoluteY="376dp" />
+
         <TextView
             android:id="@+id/myTextView"
             android:layout_width="match_parent"
