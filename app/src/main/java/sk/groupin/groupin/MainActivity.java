@@ -19,7 +19,6 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -32,8 +31,6 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout myLinLayout;
     SwipeRefreshLayout superSwipeLayout;
     private BroadcastReceiver broadcastReceiver;
-//    private TextView textView;
-    private Button toSyncButton;
 
     public void toSync(View view) {
         Intent intent = new Intent(this, PhoneSync.class );
@@ -46,20 +43,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        textView = findViewById(R.id.myTextView);
         superSwipeLayout = findViewById(R.id.mySwipeLayout);
         myLinLayout = findViewById(R.id.myLinLayout);
         superProgressBar = findViewById(R.id.myProgressBar);
         superWebView = findViewById(R.id.myWebView);
-        toSyncButton = findViewById(R.id.toSyncButton);
 
 
         superProgressBar.setMax(100);
-//        textView.setText(SharedPrefManager.getInstance(this).getToken());
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-//                textView.setText(SharedPrefManager.getInstance(MainActivity.this).getToken());
 
             }
         };
@@ -157,9 +150,13 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_forward:
                 onForwardPressed();
                 break;
-
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void menuSync(){
+        Intent intent = new Intent(this, PhoneSync.class );
+        startActivity(intent);
     }
 
     private void onForwardPressed(){
