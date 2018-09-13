@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout myLinLayout;
     SwipeRefreshLayout superSwipeLayout;
     private BroadcastReceiver broadcastReceiver;
-    private TextView textView;
+//    private TextView textView;
     private Button toSyncButton;
 
     public void toSync(View view) {
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = findViewById(R.id.myTextView);
+//        textView = findViewById(R.id.myTextView);
         superSwipeLayout = findViewById(R.id.mySwipeLayout);
         myLinLayout = findViewById(R.id.myLinLayout);
         superProgressBar = findViewById(R.id.myProgressBar);
@@ -69,11 +69,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         superProgressBar.setMax(100);
-        textView.setText(SharedPrefManager.getInstance(this).getToken());
+//        textView.setText(SharedPrefManager.getInstance(this).getToken());
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                textView.setText(SharedPrefManager.getInstance(MainActivity.this).getToken());
+//                textView.setText(SharedPrefManager.getInstance(MainActivity.this).getToken());
 
             }
         };
