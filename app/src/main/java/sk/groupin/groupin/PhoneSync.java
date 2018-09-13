@@ -4,12 +4,22 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.util.HashMap;
+
 import okhttp3.Credentials;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+
 
 public class PhoneSync extends AppCompatActivity {
 
@@ -18,10 +28,23 @@ public class PhoneSync extends AppCompatActivity {
     public Button syncPhoneButton;
     public static String username = "";
     public static String password = "";
+    private ApiInterface apiInterface;
+    private ApiInterfaceCreate apiInterfaceCreate;
+    private GCMDevices devices;
+    private String credentials;
+    private String registration_id = FirebaseInstanceId.getInstance().getToken();
+    private String cloud_message_type = "FCM";
 
     public String getByte64(String username, String password){
-        return Credentials.basic(username,password);
+        return this.credentials = Credentials.basic(username,password);
     }
+
+
+
+
+
+
+
 
     public void syncPhone(View view) {
 
@@ -43,6 +66,57 @@ public class PhoneSync extends AppCompatActivity {
             getByte64(username, password);
             Log.i("RESULT: ", getByte64(username,password));
 
+            apiInterface = ApiClient.getRetrofitInstance().create(ApiInterface.class);
+            Call<GCMDevices> call = apiInterface.getGCMDevices(this.credentials, username);
+            call.enqueue(new Callback<GCMDevices>() {
+                @Override
+                public void onResponse(Call<GCMDevices> call, Response<GCMDevices> response) {
+                    devices = response.body();
+                    if (response.code() == 403){
+                        Toast.makeText(PhoneSync.this, "Nespravne udaje", Toast.LENGTH_SHORT).show();
+                    } else if (response.code() == 404) {
+                        apiInterfaceCreate = ApiClient.getRetrofitInstance().create(ApiInterfaceCreate.class);
+                        Call<GCMDevices> callcreate = apiInterfaceCreate.putGCMDevices(credentials, registration_id, username,cloud_message_type );
+                        Log.i("REQUEST:", callcreate.request().body().contentType().toString());
+                        Log.i("REQUEST:", callcreate.request().headers().toString());
+                        Log.i("REQUEST:", callcreate.request().method());
+
+                        callcreate.enqueue(new Callback<GCMDevices>() {
+                            @Override
+                            public void onResponse(Call<GCMDevices> call, Response<GCMDevices> response) {
+                                if (response.code() == 201){
+                                    Toast.makeText(PhoneSync.this, "Zariadenie pridane USPESNE", Toast.LENGTH_LONG).show();
+                                    finish();
+                                }
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<GCMDevices> call, Throwable t) {
+                                Toast.makeText(PhoneSync.this, "CHYBA: Nie je mozne sa pripojit na INTERNET", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else if (response.code() == 200){
+                        Toast.makeText(PhoneSync.this, "Zariadenie je uz sparovane", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+
+                    Log.i("RESPONSE", response.message());
+//                    Log.i("RESPONSE BODY", String.valueOf(response.body().getUser()));
+                    Log.i("RESPONSE HEADER", String.valueOf(response.headers()));
+                    Log.i("RESPONSE RAW:", String.valueOf(response.raw()));
+                    Log.i("RESPONSE CODE:", String.valueOf(response.code()));
+                    Log.i("RESPO", String.valueOf(response.message()));
+
+
+                }
+
+                @Override
+                public void onFailure(Call<GCMDevices> call, Throwable t) {
+                    Toast.makeText(PhoneSync.this, "CHYBA: Nie je mozne sa pripojit na INTERNET", Toast.LENGTH_SHORT).show();
+                }
+            });
+
         }
 
 
@@ -52,6 +126,7 @@ public class PhoneSync extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phone_sync);
+
 
         passwrodView = findViewById(R.id.passwordView);
         usernameView = findViewById(R.id.usernameView);
